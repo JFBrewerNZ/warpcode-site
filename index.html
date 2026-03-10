@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WARPCODE — Cyberpunk Creature Battler</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #080604;
+      color: #ffe6aa;
+      font-family: 'VT323', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .scanlines {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+      pointer-events: none; z-index: 100;
+    }
+    .vignette {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.8) 100%);
+      pointer-events: none; z-index: 99;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+    .banner { width: 100%; border: 1px solid rgba(212,160,23,0.3); margin-bottom: 30px; }
+    h1 { font-size: 3em; color: #ffe6aa; text-shadow: 0 0 20px rgba(212,160,23,0.5); letter-spacing: 4px; }
+    h2 { font-size: 1.8em; color: #d4a017; margin: 30px 0 15px; }
+    p, li { font-size: 1.2em; line-height: 1.6; color: #c8a850; }
+    a { color: #d4a017; }
+    .tagline { font-size: 1.5em; color: #d4a017; margin: 10px 0 30px; }
+    .features { list-style: none; padding: 0; }
+    .features li { padding: 8px 0; }
+    .features li::before { content: '> '; color: #d4a017; }
+    .cta {
+      display: inline-block; margin: 30px 0; padding: 15px 40px;
+      background: rgba(212,160,23,0.15); border: 1px solid #d4a017;
+      color: #ffe6aa; font-family: 'VT323', monospace; font-size: 1.4em;
+      text-decoration: none; letter-spacing: 2px;
+      transition: all 0.2s;
+    }
+    .cta:hover { background: rgba(212,160,23,0.3); box-shadow: 0 0 20px rgba(212,160,23,0.3); }
+    .footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid rgba(212,160,23,0.2); font-size: 1em; color: #8c690f; }
+    .footer a { color: #8c690f; }
+    .section { margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <div class="container">
+    <img src="assets/readme_banner.png" alt="WARPCODE" class="banner">
+
+    <p class="tagline">SCAN. BATTLE. CONQUER.</p>
+
+    <p>Cyberpunk creature auto-battler in the real world. Scan barcodes, probe WiFi networks, and explore with GPS to discover digital creatures, battle them, and paint the map with your faction's color.</p>
+
+    <div class="section">
+      <h2>// FEATURES</h2>
+      <ul class="features">
+        <li>Scan real-world barcodes to discover creatures, items, and credits</li>
+        <li>WiFi and Bluetooth network probing for unique encounters</li>
+        <li>GPS-based Points of Interest with hackable minigames</li>
+        <li>Real-time auto-battler combat with 21 unique creatures</li>
+        <li>3 factions competing for territory control across the real world</li>
+        <li>Gym system — claim nodes, deploy defenders, battle for dominance</li>
+        <li>Evolution, crafting, trading, and daily missions</li>
+        <li>Full CRT terminal aesthetic with procedural audio</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>// DOWNLOAD</h2>
+      <p>Coming soon to Google Play.</p>
+      <!-- <a href="#" class="cta">GET IT ON GOOGLE PLAY</a> -->
+    </div>
+
+    <div class="section">
+      <h2>// LINKS</h2>
+      <p><a href="privacy.html">> Privacy Policy</a></p>
+      <p><a href="terms.html">> Terms of Service</a></p>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 Operative Kiwi. All rights reserved.</p>
+      <p>Contact: <a href="mailto:email@operative.kiwi">email@operative.kiwi</a></p>
+    </div>
+  </div>
+</body>
+</html>

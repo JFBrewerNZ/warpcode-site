@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WARPCODE — Privacy Policy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080604; color: #c8a850; font-family: 'VT323', monospace; min-height: 100vh; }
+    .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px); pointer-events: none; z-index: 100; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+    h1 { font-size: 2.5em; color: #ffe6aa; text-shadow: 0 0 20px rgba(212,160,23,0.5); letter-spacing: 3px; margin-bottom: 10px; }
+    h2 { font-size: 1.6em; color: #d4a017; margin: 30px 0 10px; }
+    p, li { font-size: 1.15em; line-height: 1.7; margin-bottom: 10px; }
+    a { color: #d4a017; }
+    .date { color: #8c690f; font-size: 1.1em; margin-bottom: 30px; }
+    ul { padding-left: 20px; }
+    li::marker { color: #d4a017; }
+    .back { display: inline-block; margin-bottom: 20px; color: #d4a017; text-decoration: none; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="container">
+    <a href="index.html" class="back">&lt; BACK</a>
+    <h1>// PRIVACY POLICY</h1>
+    <p class="date">Effective Date: March 11, 2026</p>
+
+    <p>Operative Kiwi ("we", "us", "our") operates the WARPCODE mobile application (the "App"). This policy describes how we collect, use, and protect your information.</p>
+
+    <h2>1. Information We Collect</h2>
+
+    <p><strong>Account Information:</strong> When you sign in with Google, we receive your Google account email address and display name. We also store the username you choose in the App.</p>
+
+    <p><strong>Location Data:</strong> The App uses your device's GPS location to show your position on the map, find nearby Points of Interest, and enable location-based gameplay. Location data is processed on your device and used to query our servers for nearby game content. We do not continuously track or store your precise location history.</p>
+
+    <p><strong>Gameplay Data:</strong> We store your game progress, including creatures captured, items collected, battle statistics, faction choice, achievements, and other gameplay state on our servers (hosted by Supabase) to enable cloud saves, leaderboards, multiplayer features, and cross-device play.</p>
+
+    <p><strong>Barcode Scans:</strong> When you scan a barcode, we store a one-way hash (SHA-256) of the barcode value on our servers to provide consistent community rewards. We do not store the original barcode content.</p>
+
+    <p><strong>Network Scans:</strong> The App can read nearby WiFi network names (SSIDs) and Bluetooth device names to generate in-game encounters. This data is processed locally on your device and is not transmitted to our servers. The App never connects to, interacts with, or modifies any scanned networks or devices.</p>
+
+    <p><strong>Chat Messages:</strong> Messages sent in public or faction chat channels are stored on our servers and visible to other players. Chat messages are automatically deleted after 7 days.</p>
+
+    <h2>2. How We Use Your Information</h2>
+    <ul>
+      <li>To provide and maintain the App's gameplay features</li>
+      <li>To sync your game progress across devices</li>
+      <li>To enable multiplayer features (gyms, territory, trading, chat, friends)</li>
+      <li>To provide community features (barcode discovery, leaderboards)</li>
+      <li>To improve the App and fix bugs</li>
+    </ul>
+
+    <h2>3. Data Sharing</h2>
+    <p>We do not sell your personal information. We share data only as follows:</p>
+    <ul>
+      <li><strong>Other Players:</strong> Your username, faction, avatar, badges, and public gameplay stats are visible to other players via public profiles, leaderboards, and chat.</li>
+      <li><strong>Service Providers:</strong> We use Supabase (database/authentication) and Google (authentication). These services process data according to their own privacy policies.</li>
+      <li><strong>Legal Requirements:</strong> We may disclose information if required by law.</li>
+    </ul>
+
+    <h2>4. Data Storage & Security</h2>
+    <p>Your data is stored on Supabase servers with encryption in transit and at rest. Authentication is handled via Google OAuth 2.0. We implement row-level security policies to ensure players can only access their own data.</p>
+
+    <h2>5. Data Retention</h2>
+    <ul>
+      <li>Account and gameplay data: retained while your account is active</li>
+      <li>Chat messages: automatically deleted after 7 days</li>
+      <li>Mailbox messages: automatically deleted after 30 days</li>
+      <li>Marketplace listings: expire after 7 days</li>
+    </ul>
+
+    <h2>6. Your Rights</h2>
+    <p>You may request deletion of your account and associated data by contacting us at <a href="mailto:email@operative.kiwi">email@operative.kiwi</a>. You can clear local game data from the App's settings at any time.</p>
+
+    <h2>7. Children's Privacy</h2>
+    <p>The App is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information, please contact us.</p>
+
+    <h2>8. Changes to This Policy</h2>
+    <p>We may update this policy from time to time. Changes will be posted on this page with an updated effective date.</p>
+
+    <h2>9. Contact</h2>
+    <p>For questions about this privacy policy, contact us at:<br>
+    <a href="mailto:email@operative.kiwi">email@operative.kiwi</a></p>
+  </div>
+</body>
+</html>
