@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -148,20 +148,20 @@
     const SUPABASE_URL = 'https://ywozktsmimfqbqzflmsh.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b3prdHNtaW1mcWJxemZsbXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MDgyMzcsImV4cCI6MjA4NzM4NDIzN30.-PhtdX_b7eqRQKIWKfOsmvFZaetVx7F60n4jlaimq20';
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = null;
     let messageTarget = 'all';
 
     // Check existing session
     async function init() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await sb.auth.getSession();
       if (session) {
         await checkAdmin(session.user);
       }
     }
 
     async function signIn() {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: window.location.href }
       });
@@ -172,7 +172,7 @@
     }
 
     async function signOut() {
-      await supabase.auth.signOut();
+      await sb.auth.signOut();
       currentUser = null;
       document.getElementById('loginScreen').classList.remove('hidden');
       document.getElementById('adminPanel').classList.add('hidden');
@@ -189,7 +189,7 @@
         if (error || !data || !data.is_admin) {
           document.getElementById('loginStatus').textContent = 'ACCESS DENIED -- Not an administrator';
           document.getElementById('loginStatus').className = 'status error';
-          await supabase.auth.signOut();
+          await sb.auth.signOut();
           return;
         }
         
@@ -216,7 +216,7 @@
 
     // Players
     async function loadPlayers() {
-      const { data, error } = await supabase.rpc('admin_list_players', { p_limit: 100, p_offset: 0 });
+      const { data, error } = await sb.rpc('admin_list_players', { p_limit: 100, p_offset: 0 });
       if (error) { console.error(error); return; }
       renderPlayers(data || []);
     }
@@ -224,7 +224,7 @@
     async function searchPlayers() {
       const q = document.getElementById('playerSearch').value.trim();
       if (!q) { loadPlayers(); return; }
-      const { data, error } = await supabase.rpc('admin_search_players', { p_query: q });
+      const { data, error } = await sb.rpc('admin_search_players', { p_query: q });
       if (error) { console.error(error); return; }
       renderPlayers(data || []);
     }
@@ -254,7 +254,7 @@
     async function toggleBan(userId, ban) {
       const action = ban ? 'BAN' : 'UNBAN';
       if (!confirm(`${action} this player?`)) return;
-      const { error } = await supabase.rpc('admin_set_ban', { p_user_id: userId, p_banned: ban });
+      const { error } = await sb.rpc('admin_set_ban', { p_user_id: userId, p_banned: ban });
       if (error) { alert('Error: ' + error.message); return; }
       loadPlayers();
     }
@@ -268,7 +268,7 @@
 
     // News
     async function loadNews() {
-      const { data, error } = await supabase.rpc('get_latest_news');
+      const { data, error } = await sb.rpc('get_latest_news');
       if (error) { console.error(error); return; }
       if (!data || data.length === 0) {
         document.getElementById('newsList').innerHTML = '<p style="color:#8c690f">No news posted yet.</p>';
@@ -292,7 +292,7 @@
       const status = document.getElementById('newsStatus');
       if (!title || !body) { status.textContent = 'Title and body required'; status.className = 'status error'; return; }
       
-      const { error } = await supabase.rpc('post_news', { p_title: title, p_body: body });
+      const { error } = await sb.rpc('post_news', { p_title: title, p_body: body });
       if (error) { status.textContent = 'Error: ' + error.message; status.className = 'status error'; return; }
       
       status.textContent = 'News published!'; status.className = 'status success';
@@ -323,7 +323,7 @@
         params.p_target_user_ids = [userId];
       }
       
-      const { error } = await supabase.rpc('send_admin_message', params);
+      const { error } = await sb.rpc('send_admin_message', params);
       if (error) { status.textContent = 'Error: ' + error.message; status.className = 'status error'; return; }
       
       const count = messageTarget === 'all' ? 'all players' : '1 player';
@@ -333,7 +333,7 @@
     }
 
     // Auth listener
-    supabase.auth.onAuthStateChange((event, session) => {
+    sb.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         checkAdmin(session.user);
       }
