@@ -63,7 +63,7 @@
         <li>Scan real-world barcodes to discover creatures, items, and credits</li>
         <li>WiFi and Bluetooth network probing for unique encounters</li>
         <li>GPS-based Points of Interest with hackable minigames</li>
-        <li>Real-time auto-battler combat with 21 unique creatures</li>
+        <li>Real-time auto-battler combat with 99 unique creatures</li>
         <li>3 factions competing for territory control across the real world</li>
         <li>Gym system — claim nodes, deploy defenders, battle for dominance</li>
         <li>Evolution, crafting, trading, and daily missions</li>
@@ -74,7 +74,7 @@
     <div class="section">
       <h2>// DOWNLOAD</h2>
       <a href="https://github.com/JFBrewerNZ/warpcode-site/releases/latest/download/Warpcode.apk" class="cta">DOWNLOAD APK (ANDROID)</a>
-      <p style="margin-top: 15px; font-size: 1em; color: #8c690f;">Current version: v0.7.3</p>
+      <p id="version-line" style="margin-top: 15px; font-size: 1em; color: #8c690f;">Current version: loading...</p>
       <p style="margin-top: 20px;">Coming soon to Google Play.</p>
       <p>iOS App Store planned for the future.</p>
     </div>
@@ -91,5 +91,28 @@
       <p>Contact: <a href="mailto:email@operative.kiwi">email@operative.kiwi</a></p>
     </div>
   </div>
+  <script>
+    // Pull current version from Supabase app_config
+    (async () => {
+      try {
+        const res = await fetch(
+          'https://ywozktsmimfqbqzflmsh.supabase.co/rest/v1/app_config?key=eq.min_version&select=value',
+          { headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b3prdHNtaW1mcWJxemZsbXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MDgyMzcsImV4cCI6MjA4NzM4NDIzN30.-PhtdX_b7eqRQKIWKfOsmvFZaetVx7F60n4jlaimq20',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b3prdHNtaW1mcWJxemZsbXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MDgyMzcsImV4cCI6MjA4NzM4NDIzN30.-PhtdX_b7eqRQKIWKfOsmvFZaetVx7F60n4jlaimq20'
+          }}
+        );
+        const data = await res.json();
+        if (data.length > 0) {
+          const v = data[0].value;
+          const s = v.padStart(10, '0');
+          const display = s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '.' + s.slice(8);
+          document.getElementById('version-line').textContent = 'Current version: v' + display;
+        }
+      } catch (e) {
+        document.getElementById('version-line').textContent = 'Current version: unavailable';
+      }
+    })();
+  </script>
 </body>
 </html>
