@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WARPCODE // ADMIN</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080604; color: #c8a850; font-family: 'VT323', monospace; min-height: 100vh; }
+    .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px); pointer-events: none; z-index: 100; }
+    .container { max-width: 960px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+    h1 { font-size: 2em; color: #ffe6aa; text-shadow: 0 0 15px rgba(212,160,23,0.4); letter-spacing: 3px; margin-bottom: 8px; }
+    h2 { font-size: 1.5em; color: #d4a017; margin: 20px 0 10px; }
+    .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
+    .login-screen h1 { font-size: 2.5em; margin-bottom: 20px; }
+    .btn { display: inline-block; padding: 12px 30px; background: rgba(212,160,23,0.12); border: 1px solid #d4a017; color: #ffe6aa; font-family: 'VT323', monospace; font-size: 1.2em; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; text-decoration: none; }
+    .btn:hover { background: rgba(212,160,23,0.25); box-shadow: 0 0 15px rgba(212,160,23,0.3); }
+    .btn.danger { border-color: #c0392b; color: #e74c3c; }
+    .btn.danger:hover { background: rgba(192,57,43,0.2); }
+    .btn.small { padding: 6px 14px; font-size: 1em; }
+    .hidden { display: none !important; }
+    .status { color: #8c690f; font-size: 1em; margin-top: 10px; }
+    .error { color: #e74c3c; }
+    .success { color: #27ae60; }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 2px; margin-bottom: 16px; border-bottom: 1px solid rgba(212,160,23,0.2); }
+    .tab { padding: 10px 20px; cursor: pointer; color: #8c690f; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab:hover { color: #d4a017; }
+    .tab.active { color: #ffe6aa; border-bottom-color: #d4a017; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(212,160,23,0.15); font-size: 1.1em; }
+    th { color: #d4a017; font-size: 1em; letter-spacing: 1px; }
+    td { color: #c8a850; }
+    tr:hover td { background: rgba(212,160,23,0.05); }
+    
+    /* Forms */
+    input, textarea, select { background: #0d0b08; border: 1px solid rgba(212,160,23,0.3); color: #ffe6aa; font-family: 'VT323', monospace; font-size: 1.1em; padding: 8px 12px; width: 100%; margin: 4px 0 12px; }
+    textarea { min-height: 100px; resize: vertical; }
+    input:focus, textarea:focus { outline: none; border-color: #d4a017; box-shadow: 0 0 8px rgba(212,160,23,0.2); }
+    label { color: #d4a017; font-size: 1em; display: block; margin-top: 8px; }
+    
+    /* Cards */
+    .card { background: rgba(212,160,23,0.05); border: 1px solid rgba(212,160,23,0.2); padding: 14px; margin-bottom: 12px; border-radius: 2px; }
+    .card-title { color: #ffe6aa; font-size: 1.2em; }
+    .card-meta { color: #8c690f; font-size: 0.9em; margin-top: 4px; }
+    .card-body { margin-top: 8px; line-height: 1.5; }
+    .card-actions { margin-top: 10px; display: flex; gap: 8px; }
+    
+    /* Search */
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .search-row input { flex: 1; }
+    
+    /* Player badges */
+    .badge { display: inline-block; padding: 2px 8px; font-size: 0.9em; border-radius: 2px; }
+    .badge.admin { background: rgba(212,160,23,0.2); color: #d4a017; border: 1px solid #d4a017; }
+    .badge.banned { background: rgba(231,76,60,0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+    .badge.faction { padding: 2px 6px; }
+    .badge.red { background: rgba(231,76,60,0.15); color: #e74c3c; }
+    .badge.blue { background: rgba(52,152,219,0.15); color: #3498db; }
+    .badge.green { background: rgba(46,204,113,0.15); color: #2ecc71; }
+    
+    /* Message target */
+    .target-options { display: flex; gap: 12px; margin: 8px 0; }
+    .target-option { cursor: pointer; padding: 6px 14px; border: 1px solid rgba(212,160,23,0.3); }
+    .target-option.selected { border-color: #d4a017; background: rgba(212,160,23,0.15); color: #ffe6aa; }
+    
+    .user-info { color: #8c690f; font-size: 0.95em; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="container">
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+      <h1>&gt;WARPCODE_ADMIN</h1>
+      <p style="color:#8c690f; margin-bottom: 30px;">OPERATOR AUTHENTICATION REQUIRED</p>
+      <button class="btn" onclick="signIn()">SIGN IN WITH GOOGLE</button>
+      <p id="loginStatus" class="status"></p>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden">
+      <h1>&gt;ADMIN_CONSOLE</h1>
+      <p class="user-info">Operator: <span id="adminName">-</span> | <a href="#" onclick="signOut()" style="color:#8c690f">[LOGOUT]</a></p>
+      
+      <div class="tabs">
+        <div class="tab active" data-tab="players" onclick="switchTab('players')">PLAYERS</div>
+        <div class="tab" data-tab="news" onclick="switchTab('news')">NEWS</div>
+        <div class="tab" data-tab="messages" onclick="switchTab('messages')">MESSAGES</div>
+      </div>
+      
+      <!-- Players Tab -->
+      <div id="tab-players" class="tab-content active">
+        <div class="search-row">
+          <input type="text" id="playerSearch" placeholder="Search by username..." onkeyup="if(event.key==='Enter')searchPlayers()">
+          <button class="btn small" onclick="searchPlayers()">SEARCH</button>
+          <button class="btn small" onclick="loadPlayers()">ALL</button>
+        </div>
+        <div id="playerList"></div>
+      </div>
+      
+      <!-- News Tab -->
+      <div id="tab-news" class="tab-content">
+        <h2>POST NEWS</h2>
+        <label>TITLE</label>
+        <input type="text" id="newsTitle" placeholder="News title...">
+        <label>BODY</label>
+        <textarea id="newsBody" placeholder="News content..."></textarea>
+        <button class="btn" onclick="postNews()">PUBLISH</button>
+        <p id="newsStatus" class="status"></p>
+        
+        <h2 style="margin-top: 24px;">EXISTING NEWS</h2>
+        <div id="newsList"></div>
+      </div>
+      
+      <!-- Messages Tab -->
+      <div id="tab-messages" class="tab-content">
+        <h2>SEND MESSAGE</h2>
+        <label>TARGET</label>
+        <div class="target-options">
+          <div class="target-option selected" data-target="all" onclick="selectTarget('all')">ALL PLAYERS</div>
+          <div class="target-option" data-target="individual" onclick="selectTarget('individual')">INDIVIDUAL</div>
+        </div>
+        <div id="targetUserField" class="hidden">
+          <label>PLAYER USERNAME (search first in Players tab)</label>
+          <input type="text" id="targetUserId" placeholder="Player UUID...">
+        </div>
+        <label>SUBJECT</label>
+        <input type="text" id="msgSubject" placeholder="Message subject...">
+        <label>BODY</label>
+        <textarea id="msgBody" placeholder="Message content..."></textarea>
+        <button class="btn" onclick="sendMessage()">SEND</button>
+        <p id="msgStatus" class="status"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://ywozktsmimfqbqzflmsh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b3prdHNtaW1mcWJxemZsbXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MDgyMzcsImV4cCI6MjA4NzM4NDIzN30.-PhtdX_b7eqRQKIWKfOsmvFZaetVx7F60n4jlaimq20';
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = null;
+    let messageTarget = 'all';
+
+    // Check existing session
+    async function init() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await checkAdmin(session.user);
+      }
+    }
+
+    async function signIn() {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.href }
+      });
+      if (error) {
+        document.getElementById('loginStatus').textContent = 'ERROR: ' + error.message;
+        document.getElementById('loginStatus').className = 'status error';
+      }
+    }
+
+    async function signOut() {
+      await supabase.auth.signOut();
+      currentUser = null;
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('adminPanel').classList.add('hidden');
+    }
+
+    async function checkAdmin(user) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('is_admin, username')
+          .eq('id', user.id)
+          .single();
+        
+        if (error || !data || !data.is_admin) {
+          document.getElementById('loginStatus').textContent = 'ACCESS DENIED -- Not an administrator';
+          document.getElementById('loginStatus').className = 'status error';
+          await supabase.auth.signOut();
+          return;
+        }
+        
+        currentUser = user;
+        document.getElementById('adminName').textContent = data.username || user.email;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        loadPlayers();
+        loadNews();
+      } catch (e) {
+        document.getElementById('loginStatus').textContent = 'ERROR: ' + e.message;
+        document.getElementById('loginStatus').className = 'status error';
+      }
+    }
+
+    // Tabs
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      if (tab === 'news') loadNews();
+    }
+
+    // Players
+    async function loadPlayers() {
+      const { data, error } = await supabase.rpc('admin_list_players', { p_limit: 100, p_offset: 0 });
+      if (error) { console.error(error); return; }
+      renderPlayers(data || []);
+    }
+
+    async function searchPlayers() {
+      const q = document.getElementById('playerSearch').value.trim();
+      if (!q) { loadPlayers(); return; }
+      const { data, error } = await supabase.rpc('admin_search_players', { p_query: q });
+      if (error) { console.error(error); return; }
+      renderPlayers(data || []);
+    }
+
+    function renderPlayers(players) {
+      if (players.length === 0) {
+        document.getElementById('playerList').innerHTML = '<p style="color:#8c690f">No players found.</p>';
+        return;
+      }
+      let html = '<table><tr><th>USERNAME</th><th>FACTION</th><th>XP</th><th>STATUS</th><th>ACTIONS</th></tr>';
+      for (const p of players) {
+        const faction = p.faction ? `<span class="badge faction ${p.faction}">${p.faction.toUpperCase()}</span>` : '-';
+        const badges = [];
+        if (p.is_admin) badges.push('<span class="badge admin">ADMIN</span>');
+        if (p.is_banned) badges.push('<span class="badge banned">BANNED</span>');
+        const status = badges.length ? badges.join(' ') : 'OK';
+        const banBtn = p.is_banned
+          ? `<button class="btn small" onclick="toggleBan('${p.id}', false)">UNBAN</button>`
+          : `<button class="btn small danger" onclick="toggleBan('${p.id}', true)">BAN</button>`;
+        const msgBtn = `<button class="btn small" onclick="prefillMessage('${p.id}', '${(p.username||'').replace(/'/g,"\\'")}')">MSG</button>`;
+        html += `<tr><td>${p.username || '-'}</td><td>${faction}</td><td>${p.experience || 0}</td><td>${status}</td><td>${msgBtn} ${banBtn}</td></tr>`;
+      }
+      html += '</table>';
+      document.getElementById('playerList').innerHTML = html;
+    }
+
+    async function toggleBan(userId, ban) {
+      const action = ban ? 'BAN' : 'UNBAN';
+      if (!confirm(`${action} this player?`)) return;
+      const { error } = await supabase.rpc('admin_set_ban', { p_user_id: userId, p_banned: ban });
+      if (error) { alert('Error: ' + error.message); return; }
+      loadPlayers();
+    }
+
+    function prefillMessage(userId, username) {
+      switchTab('messages');
+      selectTarget('individual');
+      document.getElementById('targetUserId').value = userId;
+      document.getElementById('msgSubject').focus();
+    }
+
+    // News
+    async function loadNews() {
+      const { data, error } = await supabase.rpc('get_latest_news');
+      if (error) { console.error(error); return; }
+      if (!data || data.length === 0) {
+        document.getElementById('newsList').innerHTML = '<p style="color:#8c690f">No news posted yet.</p>';
+        return;
+      }
+      let html = '';
+      for (const n of data) {
+        const date = new Date(n.created_at).toLocaleDateString();
+        html += `<div class="card">
+          <div class="card-title">${n.title}</div>
+          <div class="card-meta">${date}</div>
+          <div class="card-body">${n.body}</div>
+        </div>`;
+      }
+      document.getElementById('newsList').innerHTML = html;
+    }
+
+    async function postNews() {
+      const title = document.getElementById('newsTitle').value.trim();
+      const body = document.getElementById('newsBody').value.trim();
+      const status = document.getElementById('newsStatus');
+      if (!title || !body) { status.textContent = 'Title and body required'; status.className = 'status error'; return; }
+      
+      const { error } = await supabase.rpc('post_news', { p_title: title, p_body: body });
+      if (error) { status.textContent = 'Error: ' + error.message; status.className = 'status error'; return; }
+      
+      status.textContent = 'News published!'; status.className = 'status success';
+      document.getElementById('newsTitle').value = '';
+      document.getElementById('newsBody').value = '';
+      loadNews();
+    }
+
+    // Messages
+    function selectTarget(type) {
+      messageTarget = type;
+      document.querySelectorAll('.target-option').forEach(o => o.classList.remove('selected'));
+      document.querySelector(`.target-option[data-target="${type}"]`).classList.add('selected');
+      document.getElementById('targetUserField').classList.toggle('hidden', type === 'all');
+    }
+
+    async function sendMessage() {
+      const subject = document.getElementById('msgSubject').value.trim();
+      const body = document.getElementById('msgBody').value.trim();
+      const status = document.getElementById('msgStatus');
+      
+      if (!subject || !body) { status.textContent = 'Subject and body required'; status.className = 'status error'; return; }
+      
+      const params = { p_subject: subject, p_body: body, p_target_type: messageTarget };
+      if (messageTarget === 'individual') {
+        const userId = document.getElementById('targetUserId').value.trim();
+        if (!userId) { status.textContent = 'Player UUID required'; status.className = 'status error'; return; }
+        params.p_target_user_ids = [userId];
+      }
+      
+      const { error } = await supabase.rpc('send_admin_message', params);
+      if (error) { status.textContent = 'Error: ' + error.message; status.className = 'status error'; return; }
+      
+      const count = messageTarget === 'all' ? 'all players' : '1 player';
+      status.textContent = `Message sent to ${count}!`; status.className = 'status success';
+      document.getElementById('msgSubject').value = '';
+      document.getElementById('msgBody').value = '';
+    }
+
+    // Auth listener
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        checkAdmin(session.user);
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
