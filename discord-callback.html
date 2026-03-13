@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warpcode - Discord Link</title>
+  <style>
+    body {
+      background: #080604;
+      color: #d4a017;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+    }
+    .status {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+    }
+    .error { color: #ff4444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="status" id="status">&gt; LINKING DISCORD ACCOUNT...</div>
+  </div>
+  <script>
+    // Discord implicit flow puts token in URL fragment
+    const fragment = window.location.hash.substring(1);
+    const params = new URLSearchParams(fragment);
+    const accessToken = params.get('access_token');
+
+    if (accessToken) {
+      // Redirect to app deep link with the token
+      const deepLink = 'warpcode://discord-callback?access_token=' + encodeURIComponent(accessToken);
+      document.getElementById('status').textContent = '> REDIRECTING TO WARPCODE...';
+      window.location.href = deepLink;
+
+      // Fallback message if deep link doesn't work
+      setTimeout(() => {
+        document.getElementById('status').innerHTML =
+          '&gt; LINK READY<br><br>If the app didn\'t open automatically,<br>open Warpcode and try again.';
+      }, 3000);
+    } else {
+      // Check for error
+      const urlParams = new URLSearchParams(window.location.search);
+      const error = urlParams.get('error');
+      if (error) {
+        document.getElementById('status').innerHTML =
+          '<span class="error">&gt; ERROR: ' + error + '</span><br>Close this page and try again.';
+      } else {
+        document.getElementById('status').innerHTML =
+          '<span class="error">&gt; ERROR: No token received.</span><br>Close this page and try again.';
+      }
+    }
+  </script>
+</body>
+</html>
